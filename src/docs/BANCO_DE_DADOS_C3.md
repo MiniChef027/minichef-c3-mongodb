@@ -2,7 +2,7 @@
 
 **Trabalho C3 da disciplina de Banco de Dados.** Continuação direta da C2: o mesmo MVP do MiniChef. O banco relacional de origem roda no Oracle da VM da disciplina, como pede o item 4 do edital, e os dados são migrados para o MongoDB.
 
-**Grupo:** Carlos Henrique Forechi Schmittel, Cesar e Gabriel.
+**Grupo:** Carlos Henrique Forechi, Cesar Augusto e Gabriel Bitti.
 
 ---
 
