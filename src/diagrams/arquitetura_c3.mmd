@@ -1,0 +1,43 @@
+---
+title: "MiniChef C3 | Arquitetura do programa (camadas do modelo do professor)"
+---
+flowchart TB
+    ORA[("Oracle<br/>banco relacional da C2")]
+    MG[("MongoDB<br/>8 coleções")]
+    MIG["createCollectionsAndData.js<br/>migração C2 para C3"]
+    ESQ["mongo/colecoes.js<br/>validação e índices"]
+    CON["conexion/<br/>conexão MongoDB e Oracle"]
+    MOD["model/<br/>8 classes de entidade"]
+    CTRL["controller/<br/>inserir, remover, atualizar"]
+    UT["utils/<br/>config (menus) e splash screen"]
+    REP["reports/<br/>relatórios"]
+    QRY["mongo/consultas.js<br/>consultas de referência"]
+    PRI["principal.js<br/>menu principal"]
+    USR(["Usuário no console"])
+
+    ORA --> MIG
+    ESQ --> MIG
+    MIG --> MG
+    CON --> MIG
+    MOD --> CTRL
+    CON --> CTRL
+    CON --> UT
+    CON --> REP
+    QRY --> CTRL
+    QRY --> REP
+    QRY --> UT
+    CTRL --> PRI
+    UT --> PRI
+    REP --> PRI
+    CTRL <--> MG
+    REP --> MG
+    PRI <--> USR
+
+    classDef db fill:#15261B,stroke:#15261B,color:#FAF6EA
+    classDef carlos fill:#FFF3E8,stroke:#EC5B08,stroke-width:2px,color:#15261B
+    classDef cesar fill:#FAF6EA,stroke:#15261B,stroke-width:2px,color:#15261B
+    classDef gabriel fill:#FDF1D6,stroke:#E3A73C,stroke-width:2px,color:#15261B
+    class ORA,MG db
+    class ESQ,QRY carlos
+    class MIG,CON,MOD,CTRL cesar
+    class UT,REP,PRI gabriel

@@ -1,0 +1,97 @@
+---
+title: "MiniChef | Diagrama Relacional do MVP (Oracle), origem das coleções MongoDB (C3)"
+---
+erDiagram
+    usuario ||--o{ receita : "autor_id (bloqueia)"
+    usuario |o--o{ receita : "moderador_id (bloqueia)"
+    receita ||--o{ receita_ingrediente : "receita_id (CASCADE)"
+    ingrediente ||--o{ receita_ingrediente : "ingrediente_id (bloqueia)"
+    usuario ||--o{ planner_semanal : "usuario_id (CASCADE)"
+    planner_semanal ||--o{ item_planner : "planner_id (CASCADE)"
+    receita ||--o{ item_planner : "receita_id (bloqueia)"
+    planner_semanal ||--o{ lista_compras : "planner_id (CASCADE)"
+    lista_compras ||--o{ item_lista_compras : "lista_compras_id (CASCADE)"
+    ingrediente ||--o{ item_lista_compras : "ingrediente_id (bloqueia)"
+
+    usuario {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        VARCHAR2(120) nome "NOT NULL"
+        VARCHAR2(160) email UK "NOT NULL"
+        NUMBER(1) email_confirmado "NOT NULL, 0 ou 1, default 0"
+        DATE data_nascimento "NOT NULL"
+        VARCHAR2(14) cpf UK "NOT NULL"
+        VARCHAR2(255) senha_hash "NOT NULL"
+        VARCHAR2(30) tipo_conta "NOT NULL, 8 tipos de conta"
+        VARCHAR2(30) perfil_acesso "NOT NULL, comum/moderador/administrador"
+        NUMBER(1) ativo "NOT NULL, 0 ou 1, default 1, futuro"
+        VARCHAR2(255) foto_perfil_url "NULL, futuro"
+        TIMESTAMP criado_em "NOT NULL, default SYSTIMESTAMP"
+    }
+    ingrediente {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        VARCHAR2(100) nome UK "NOT NULL, único sem diferenciar caixa"
+        VARCHAR2(50) categoria "NULL"
+        VARCHAR2(20) unidade_padrao "NOT NULL"
+        NUMBER(5) validade_media_dias "NULL, futuro"
+        NUMBER preco_medio "NULL, (10,2), futuro"
+    }
+    receita {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        VARCHAR2(150) nome "NOT NULL"
+        NUMBER(5) porcao_padrao "NOT NULL, > 0"
+        VARCHAR2(60) refeicao_recomendada "NULL"
+        VARCHAR2(4000) modo_preparo "NOT NULL"
+        VARCHAR2(60) nacionalidade "NULL"
+        NUMBER(5) tempo_medio_gasto_min "NOT NULL, > 0"
+        VARCHAR2(60) finalidade "NULL"
+        NUMBER orcamento_estimado "NULL, (10,2)"
+        VARCHAR2(255) foto_url "NULL, futuro"
+        VARCHAR2(255) link_video "NULL, futuro"
+        VARCHAR2(20) status "NOT NULL, default Rascunho"
+        VARCHAR2(4000) feedback_moderacao "NULL"
+        NUMBER(10) moderador_id FK "NULL, futuro"
+        TIMESTAMP analisado_em "NULL, futuro"
+        NUMBER(10) autor_id FK "NOT NULL"
+        TIMESTAMP criado_em "NOT NULL, default SYSTIMESTAMP"
+    }
+    receita_ingrediente {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        NUMBER(10) receita_id FK "NOT NULL"
+        NUMBER(10) ingrediente_id FK "NOT NULL"
+        NUMBER quantidade "NOT NULL, (10,2), > 0"
+        VARCHAR2(20) unidade "NOT NULL"
+        VARCHAR2(20) papel "NOT NULL, Principal/Secundário/Removível/Opcional"
+        VARCHAR2(10) visibilidade "NOT NULL, Público/Privado/Opcional"
+    }
+    planner_semanal {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        NUMBER(10) usuario_id FK "NOT NULL"
+        DATE semana_inicio "NOT NULL"
+        NUMBER orcamento_definido "NULL, (10,2), futuro"
+    }
+    item_planner {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        NUMBER(10) planner_id FK "NOT NULL"
+        NUMBER(10) receita_id FK "NOT NULL"
+        VARCHAR2(15) dia_semana "NOT NULL, segunda a domingo"
+        VARCHAR2(20) refeicao "NOT NULL, Café/Almoço/Jantar/Lanche"
+        NUMBER(5) porcoes_desejadas "NOT NULL, > 0"
+    }
+    lista_compras {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        NUMBER(10) planner_id FK "NOT NULL"
+        NUMBER total_estimado "NULL, (10,2), futuro"
+        TIMESTAMP gerada_em "NOT NULL, default SYSTIMESTAMP"
+    }
+    item_lista_compras {
+        NUMBER(10) id PK "NOT NULL, IDENTITY"
+        NUMBER(10) lista_compras_id FK "NOT NULL"
+        NUMBER(10) ingrediente_id FK "NOT NULL"
+        NUMBER quantidade "NOT NULL, (10,2), > 0"
+        VARCHAR2(20) unidade "NOT NULL"
+        NUMBER custo_estimado "NULL, (10,2), futuro"
+        NUMBER(1) comprado "NOT NULL, 0 ou 1, default 0"
+    }
+
+    classDef mc fill:#FFFDF6,stroke:#EC5B08,stroke-width:2px,color:#15261B
+    class usuario,ingrediente,receita,receita_ingrediente,planner_semanal,item_planner,lista_compras,item_lista_compras mc
